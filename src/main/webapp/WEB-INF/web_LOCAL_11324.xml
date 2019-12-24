@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee https://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+
+	<!-- The definition of the Root Spring Container shared by all Servlets and Filters -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>
+			classpath:root-context.xml
+			/WEB-INF/config/action-servlet.xml
+		</param-value>
+	</context-param>
+	
+	<!-- Creates the Spring Container shared by all Servlets and Filters -->
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+
+	<!-- Processes application requests -->
+	<servlet>
+		<servlet-name>action</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<!-- spring이 제공하고 있는 클래스명 -->
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>/WEB-INF/config/action-servlet.xml</param-value>
+			<!-- xml파일에다 어떤일을 할 것인지 알려줘야 함 -->
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+		
+	<servlet-mapping>
+		<servlet-name>action</servlet-name>
+<!-- 		<url-pattern>myPage/myPage.jsp</url-pattern> -->
+		<!-- 추가해봤음 뭐지 이거만 쓰면 서버가 안켜짐-->
+		<url-pattern>/</url-pattern>
+		<!-- url 패턴이 / 라고 설정되어있는데 /때문에 모든 요청을 받게 하는 설정 -->
+	</servlet-mapping>
+<!-- 	<mime-mapping> -->
+<!--   		<extension>css</extension> -->
+<!--   		<mime-type>text/css</mime-type> -->
+<!-- 	</mime-mapping> -->
+<!-- 	<mime-mapping> -->
+<!--   		<extension>xml</extension> -->
+<!--   		<mime-type>text/xml</mime-type> -->
+<!-- 	</mime-mapping> -->
+<!-- 		jsp에서 css가 안먹을 때 사용하라는데 해도 안먹음 ㅅㅂ... 어떻게해~!~! -->
+
+</web-app>

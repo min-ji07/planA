@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- XML문서의 유효성 체크를 위해서 필요한 부분 -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="TogetherBoardMapper">
+
+	<resultMap type="TogetherBoard" id="boardResultSet">
+		<id column="tid" property="tId"/>
+		<result column="user_id" property="user_id"/>
+		<result column="gender" property="gender"/>
+		<result column="age" property="age"/>
+		<result column="title" property="title"/>
+		<result column="travel_date" property="travel_date"/>
+		<result column="content" property="content"/>
+		<result column="gender2" property="gender2"/>
+		<result column="age2" property="age2"/>	
+		<result column="ing" property="ing"/>
+		<result column="write_date" property="write_date"/>
+	</resultMap>
+
+ 	<insert id="insertBoard" parameterType="TogetherBoard">
+		INSERT INTO TBOARD VALUES(SEQ_TID.NEXTVAL, #{user_id}, #{gender}, #{age}, #{title},  #{travel_date}, #{content}, #{gender2}, #{age2}, #{ing}, SYSDATE)
+	</insert>
+	
+	
+	<select id="getListCount" resultType="_int">
+				select count(*) from TBOARD
+	</select>
+	
+	<select id="selectList" resultMap="boardResultSet">
+		select * from TBOARD tb
+		join user_info us on(tb.user_id = us.user_id)
+		order by TID desc 
+	</select>
+	
+	<!-- 페이징 처리 -->
+	   <select id="selectPageList" resultMap="boardResultSet">
+		select * from TBOARD tb
+		join user_info us on(tb.user_id = us.user_id)
+		order by TID desc 
+   </select>
+	
+	<select id="selectTogetherBoard" parameterType="_int" resultMap="boardResultSet">
+		select * from TBOARD tb
+		join user_info us on(tb.user_id = us.user_id)
+		where tid = #{tId}
+	</select>
+	
+	<select id="tboardUpdateView" parameterType="_int" resultMap="boardResultSet">
+		select * from TBOARD
+		where tid = #{tId} 
+	</select>
+	
+	<!-- dao랑 id 맞춰서 써야해!!!!!!! -->
+	<update id="updateBoard" parameterType="TogetherBoard">
+		UPDATE TBOARD SET	
+		gender = #{gender}, 
+		age = #{age}, 
+		title = #{title}, 
+		content = #{content}, 
+		gender2 = #{gender2}, 
+		age2 = #{age2},  
+		ing = #{ing}, 
+		travel_date = #{travel_date},
+		write_date = #{write_date}
+		WHERE tid = #{tId}
+	</update>
+	
+	<!-- 게시물 삭제 -->
+	<delete id="deleteBoard" parameterType="TogetherBoard">
+		DELETE TBOARD 
+		WHERE tid = #{tId}
+	</delete>
+
+
+		<!-- 댓글 삭제 -->
+	<delete id="deleteReply" parameterType="Reply">
+		DELETE REPLY 
+		WHERE tid = #{tId}
+	</delete>
+	
+
+	<select id="selectMyListCount"  resultType="_int" >
+		select count(*) from TBOARD tb
+		where '%'||tb.title||'%' like '%'||#{selected}||'%'
+		or '%'||tb.content||'%' like '%'||#{selected}||'%'
+	</select>
+
+	<select id="selectMy" resultMap="boardResultSet">
+		select * from TBOARD tb
+ 		where '%'||tb.title||'%' like '%'||#{selected}||'%'
+		or '%'||tb.content||'%' like '%'||#{selected}||'%'
+<!-- 		where title like '%#{selected}%' 
+		or content like '%#[selected]%' -->
+	</select>
+	
+
+
+<!-- 댓글시작 --> 
+   <resultMap id="replyResultSet" type="Reply">
+      <id property="rId" column="rId"/>
+      <result property="rContent" column="rContent"/>
+      <result property="tId" column="tId"/>
+      <result property="user_id" column="user_id"/>
+      <result property="createDate" column="create_date"/>
+      <result property="modifyDate" column="modify_date"/>
+      <result property="status" column="status"/>
+   </resultMap>
+   
+
+	  <select id="selectReplyList" parameterType="_int" resultMap="replyResultSet">
+    	  	select *
+      		from reply r
+      	    join user_info us on (us.user_id = r.user_id)
+     		where TID= #{tId} and r.status = 'Y'
+      		order by rid desc
+   	</select>
+   	
+      <insert id="insertReply" parameterType="Reply">
+         insert into reply
+         values (seq_rid.nextval, #{rContent}, #{tId}, #{user_id}, sysdate, sysdate, default)
+   </insert> 
+
+
+
+
+
+
+</mapper>
+  
+  

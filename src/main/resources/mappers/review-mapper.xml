@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="reviewMapper">
+	<resultMap type="Review" id="reviewResultSet">
+		<id column="RID" property="rId"/>
+		<result column="USER_ID" property="userId"/>
+		<result column="RDATE" property="rDate"/>
+		<result column="RTAG" property="rTag"/>
+		<result column="COUNTRY" property="country"/>
+		<result column="RTITLE" property="rTitle"/>
+		<result column="RCONTENT" property="rContent"/>
+		<result column="RORIGIN_NAME" property="photoOrigin"/>
+		<result column="RCHANGE_NAME" property="photoChange"/>
+		<result column="RLOCK" property="rLock"/>
+		<result column="RVIEW" property="rView"/>
+	</resultMap>
+	
+	<resultMap type="ReviewComment" id="commentSet">
+		<id column="CID" property="cId"/>
+		<result column="REF_RID" property="refrId"/>
+		<result column="CCONTENT" property="cContent"/>
+		<result column="CWRITER" property="cWriter"/>
+		<result column="CDATE" property="cDate"/>
+		<result column="REF_CID" property="refcId"/>
+		<result column="CLEVEL" property="clevel"/>
+		<result column="ch" property="profilePicture"/>
+	</resultMap>
+	
+
+	<select id="getListCount" resultType="int">
+		SELECT COUNT(*)
+		FROM REVIEW
+		WHERE RLOCK!=1
+	</select>
+	
+	<select id="selectList" resultMap="reviewResultSet">
+		SELECT R.*, U.NICKNAME FROM REVIEW R
+		JOIN USER_INFO U ON(R.USER_ID = U.USER_ID)
+		WHERE R.RLOCK!=1
+		ORDER BY R.RDATE DESC
+	</select>
+	
+	<select id="getTaiwanCount" resultType="int">
+		SELECT COUNT(*)
+		FROM REVIEW
+		WHERE COUNTRY='대만' AND RLOCK!=1
+	</select>
+	
+	<select id="getVietnamCount" resultType="int">
+		SELECT COUNT(*)
+		FROM REVIEW
+		WHERE COUNTRY='베트남' AND RLOCK!=1
+	</select>
+	
+	<select id="getJapanCount" resultType="int">
+		SELECT COUNT(*)
+		FROM REVIEW
+		WHERE COUNTRY='일본' AND RLOCK!=1
+	</select>
+	
+	<select id="getChinaCount" resultType="int">
+		SELECT COUNT(*)
+		FROM REVIEW
+		WHERE COUNTRY='중국' AND RLOCK!=1
+	</select>
+	
+	<select id="getPhilCount" resultType="int">
+		SELECT COUNT(*)
+		FROM REVIEW
+		WHERE COUNTRY='필리핀' AND RLOCK!=1
+	</select>
+
+	<select id="getThailandCount" resultType="int">
+		SELECT COUNT(*)
+		FROM REVIEW
+		WHERE COUNTRY='태국' AND RLOCK!=1
+	</select>
+	
+	<select id="selectCList" resultMap="reviewResultSet">
+		SELECT R.*, U.NICKNAME FROM REVIEW R
+		JOIN USER_INFO U ON(R.USER_ID = U.USER_ID)
+		WHERE R.RLOCK!=1 AND COUNTRY=#{country} 
+		ORDER BY R.RDATE DESC
+	</select>
+	
+	<select id="getTagCount" resultType="int">
+		SELECT COUNT(*) 
+		FROM REVIEW 
+		WHERE RLOCK!=1 AND RTAG LIKE '%'||#{rTag}||'%'
+	</select>
+	
+	<select id="selectTagList" resultMap="reviewResultSet">
+		SELECT R.*, U.NICKNAME FROM REVIEW R
+		JOIN USER_INFO U ON(R.USER_ID = U.USER_ID)
+		WHERE R.RLOCK!=1 AND R.RTAG LIKE '%'||#{rTag}||'%'
+		ORDER BY R.RDATE DESC
+	</select>
+	
+	<select id="getKeywordCount" resultType="int">
+		SELECT COUNT(*)
+		FROM REVIEW
+		JOIN USER_INFO USING(USER_ID)
+		WHERE RLOCK!=1 AND RTITLE LIKE '%'||#{keyword}||'%' OR NICKNAME LIKE '%'||#{keyword}||'%'
+	</select>
+	
+	<select id="selectKeywordList" resultMap="reviewResultSet">
+		SELECT R.*,U.NICKNAME
+		FROM REVIEW R
+		JOIN USER_INFO U ON(R.USER_ID=U.USER_ID)
+		WHERE R.RLOCK!=1 AND R.RTITLE LIKE '%'||#{keyword}||'%' OR U.NICKNAME LIKE '%'||#{keyword}||'%'
+		ORDER BY R.RDATE DESC
+	</select>
+	
+	
+	<insert id="reviewInsert" parameterType="hashMap">
+		INSERT INTO REVIEW VALUES(RID.nextval, #{userId}, SYSDATE, #{rTag}, #{country}, 
+									#{rTitle}, #{rContent}, #{photoOrigin}, #{photoChange}, DEFAULT, DEFAULT)
+	</insert>
+	
+	<select id="popularReview" resultMap="reviewResultSet">
+		<![CDATA[
+			SELECT *
+			FROM (SELECT R.*, U.NICKNAME 
+				  FROM REVIEW R 
+				  JOIN USER_INFO U ON(R.USER_ID = U.USER_ID)) 
+			WHERE ROWNUM<=3 AND RLOCK !=1
+			ORDER BY RVIEW DESC
+		]]>
+	</select>
+	
+	<select id="reviewDetail" resultMap="reviewResultSet">
+		SELECT R.*, U.NICKNAME 
+		FROM REVIEW R
+		JOIN USER_INFO U ON(R.USER_ID = U.USER_ID)
+		WHERE R.RLOCK!=1 AND RID=#{rId}
+	</select>
+	
+	<select id="comment" resultMap="commentSet">
+		SELECT C.*, U.NICKNAME CNICKNAME, u.change_name ch
+		FROM REVIEW_COMMENT C
+		JOIN USER_INFO U ON (CWRITER = USER_ID)
+		WHERE REF_RID=#{rId}
+		START WITH CLEVEL=1 
+		CONNECT BY PRIOR CID=REF_CID
+	</select>
+	
+	<insert id="commentInsert" parameterType="ReviewComment">
+		<choose>
+			<when test="refcId == 0">
+				INSERT INTO REVIEW_COMMENT(CID,REF_RID,CCONTENT,CWRITER,CDATE,CLEVEL) VALUES(CID.NEXTVAL, #{refrId}, #{cContent}, #{cWriter}, SYSDATE, #{clevel})
+			</when>
+			<otherwise>
+				INSERT INTO REVIEW_COMMENT VALUES(CID.NEXTVAL, #{refrId}, #{cContent}, #{cWriter}, SYSDATE, #{refcId}, #{clevel})
+			</otherwise>
+		</choose>
+	</insert>
+	
+	<update id="reviewCount" parameterType="hashMap">
+		UPDATE REVIEW SET RVIEW=#{rView} WHERE RID=#{rId}	
+	</update>
+	
+	<update id="reviewLock" parameterType="hashMap">
+		UPDATE REVIEW SET RLOCK=#{rLock} WHERE RID=#{rId}
+	</update>
+   
+   <!-- myPage 여행 후기 작성글 불러오기 --> 
+   <select id="myReviewList" parameterType="string" resultMap="reviewResultSet">
+		SELECT * FROM REVIEW WHERE USER_ID = #{user_id}
+	</select>
+   <!-- 디테일 사진 가져오기 -->
+   <select id="detailPicture" parameterType="string" resultType="string">
+   SELECT CHANGE_NAME
+	FROM USER_INFO
+	WHERE USER_ID = #{userId}
+   </select>
+   
+   <select id="showReviewUpdate" resultMap="reviewResultSet">
+		SELECT R.*, U.NICKNAME 
+		FROM REVIEW R
+		JOIN USER_INFO U ON(R.USER_ID = U.USER_ID)
+		WHERE RID=#{rId}
+	</select>
+	
+	<update id="reviewUpdate" parameterType="Review">
+		UPDATE REVIEW SET RDATE=SYSDATE, RTAG=#{rTag}, COUNTRY=#{country}, RTITLE=#{rTitle},
+			RCONTENT=#{rContent} WHERE RID=#{rId}
+	</update>
+	
+	<select id="reviewMyDetail" resultMap="reviewResultSet">
+		SELECT R.*, U.NICKNAME 
+		FROM REVIEW R
+		JOIN USER_INFO U ON(R.USER_ID = U.USER_ID)
+		WHERE RID=#{rId}
+	</select>
+	
+	
+</mapper>

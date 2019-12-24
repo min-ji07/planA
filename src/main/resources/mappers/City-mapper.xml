@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--  XML 문서의 유효성 체크를 위해 필요한 부분 -->
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="city">
+   <!-- 여기 오면 일단 결과를 돌려받을 resultMap부터 생성 -->
+   <resultMap id="cityResultSet" type="City">
+      <id column="city" property="city"/>
+      <result column="CITYNUM" property="cityNum"/>
+      <result column="COUNTRY" property="country"/>
+      <result column="room1" property="sukso1"/>
+      <result column="room1_PICTURE1" property="sukso1_picture1"/>
+      <result column="room1_PICTURE2" property="sukso1_picture2"/>
+      <result column="room1_PICTURE3" property="sukso1_picture3"/>
+      <result column="room1_PICTURE4" property="sukso1_picture4"/>
+      <result column="room1_PICTURE5" property="sukso1_picture5"/>
+      <result column="room1_WIFI" property="sukso1_wifi"/>
+      <result column="room1_BF" property="sukso1_bf"/>
+      <result column="room1_REFUND" property="sukso1_refund"/>
+      <result column="room1_SAFE" property="sukso1_safe"/>
+      <result column="room1_POOL" property="sukso1_pool"/>
+      <result column="room2" property="sukso2"/>
+      <result column="room2_PICTURE1" property="sukso2_picture1"/>
+      <result column="room2_PICTURE2" property="sukso2_picture2"/>
+      <result column="room2_PICTURE3" property="sukso2_picture3"/>
+      <result column="room2_PICTURE4" property="sukso2_picture4"/>
+      <result column="room2_PICTURE5" property="sukso2_picture5"/>
+      <result column="room2_WIFI" property="sukso2_wifi"/>
+      <result column="room2_BF" property="sukso2_bf"/>
+      <result column="room2_REFUND" property="sukso2_refund"/>
+      <result column="room2_SAFE" property="sukso2_safe"/>
+      <result column="room2_POOL" property="sukso2_pool"/>
+      <result column="room3" property="sukso3"/>
+      <result column="room3_PICTURE1" property="sukso3_picture1"/>
+      <result column="room3_PICTURE2" property="sukso3_picture2"/>
+      <result column="room3_PICTURE3" property="sukso3_picture3"/>
+      <result column="room3_PICTURE4" property="sukso3_picture4"/>
+      <result column="room3_PICTURE5" property="sukso3_picture5"/>
+      <result column="room3_WIFI" property="sukso3_wifi"/>
+      <result column="room3_BF" property="sukso3_bf"/>
+      <result column="room3_REFUND" property="sukso3_refund"/>
+      <result column="room3_SAFE" property="sukso3_safe"/>
+      <result column="room3_POOL" property="sukso3_pool"/>
+      <result column="ACTIVITY1" property="activity1"/>
+      <result column="ACTIVITY1_PICTURE1" property="activity1_picture"/>
+      <result column="ACTIVITY1_INFO" property="activity1_info"/>
+      <result column="ACTIVITY2" property="activity2"/>
+      <result column="ACTIVITY2_PICTURE1" property="activity2_picture"/>
+      <result column="ACTIVITY2_INFO" property="activity2_info"/>
+      <result column="ACTIVITY3" property="activity3"/>
+      <result column="ACTIVITY3_PICTURE1" property="activity3_picture"/>
+      <result column="ACTIVITY3_INFO" property="activity3_info"/>
+      <result column="TOUR1" property="tour1"/>
+      <result column="TOUR1_PICTURE1" property="tour1_picture"/>
+      <result column="TOUR1_INFO" property="tour1_info"/>
+      <result column="TOUR2" property="tour2"/>
+      <result column="TOUR2_PICTURE1" property="tour2_picture"/>
+      <result column="TOUR2_INFO" property="tour2_info"/>
+      <result column="TOUR3" property="tour3"/>
+      <result column="TOUR3_PICTURE1" property="tour3_picture"/>
+      <result column="TOUR3_INFO" property="tour3_info"/>
+   </resultMap>
+   
+   <resultMap id="CityPackageSet" type="RouteResult">
+   	<id column="SEQ_CITY" property="rootnum"/>
+   	<result column="USER_ID" property="user_id"/>
+   	<result column="CITY" property="city"/>
+   	<result column="country" property="country"/>
+   	<result column="AUTHOR" property="author"/>
+   	<result column="room" property="room"/>
+   	<result column="room_picture1" property="room_picture1"/>
+   	<result column="room_picture2" property="room_picture2"/>
+   	<result column="room_picture3" property="room_picture3"/>
+   	<result column="room_picture4" property="room_picture4"/>
+   	<result column="room_picture5" property="room_picture5"/>
+   	<result column="room_wifi" property="room_wifi"/>
+   	<result column="room_bf" property="room_bf"/>
+   	<result column="room_refund" property="room_refund"/>
+   	<result column="room_safe" property="room_safe"/>
+   	<result column="room_pool" property="room_pool"/>
+   	<result column="activity" property="activity"/>
+   	<result column="activity_picture1" property="activity_picture"/>
+   	<result column="activity_info" property="activity_info"/>
+   	<result column="tour" property="tour"/>
+   	<result column="tour_picture1" property="tour_picture"/>
+   	<result column="tour_info" property="tour_info"/>
+   	<result column="DEP_AIRLINE" property="dep_airLine"/>
+   	<result column="DEP_AIRDAY" property="dep_airDay"/>
+   	<result column="DEP_AIRPORT" property="dep_airPort"/>
+   	<result column="DEP_AIRTIME" property="dep_airTime"/>
+   	<result column="ENT_AIRLINE" property="ent_airLine"/>
+   	<result column="ENT_AIRDAY" property="ent_airDay"/>
+   	<result column="ENT_AIRPORT" property="ent_airPort"/>
+   	<result column="ENT_AIRTIME" property="ent_airTime"/>
+   	<result column="CATEGORY_1" property="category1"/>
+   	<result column="CATEGORY_2" property="category2"/>
+   	<result column="CATEGORY_3" property="category3"/>
+   	<result column="CATEGORY_4" property="category4"/>
+   	<result column="CATEGORY_5" property="category5"/>
+   </resultMap>
+   
+ 	<!-- 도시찾는 SQL -->
+   <select id="countryCity" resultMap="cityResultSet" parameterType="RoutePlan">
+      SELECT *
+      FROM CITY_INFO
+      WHERE CITY = #{city}
+   </select>
+   
+   <!-- 나의 여행지 저장 SQL -->
+   <insert id="insertmyRoute" parameterType="MyRoute">
+   	INSERT INTO CITY_PACKAGE
+   	(SEQ_CITY,USER_ID,CITY,country,AUTHOR,room,room_picture1,room_picture2,
+   	room_picture3,room_picture4,room_picture5,room_wifi,room_bf,room_refund,room_safe,room_pool,
+   	activity,activity_picture1,activity_info,tour,tour_picture1,tour_info,
+   	DEP_AIRLINE,DEP_AIRDAY,DEP_AIRPORT,DEP_AIRTIME,ENT_AIRLINE,ENT_AIRDAY,ENT_AIRPORT,ENT_AIRTIME)
+   	VALUES (SEQ_CITY.NEXTVAL,#{userId},#{city},#{country},'나만의여행지',#{room},#{room_picture1}
+   	,#{room_picture2},#{room_picture3},#{room_picture4},#{room_picture5},#{room_wifi},#{room_bf}
+   	,#{room_refund},#{room_safe},#{room_pool},#{activity},#{activity_picture},#{activity_info}
+   	,#{tour},#{tour_picture},#{tour_info},#{dep_airLine},#{dep_airDay},#{dep_airPort},#{dep_airTime}
+   	,#{ent_airLine},#{ent_airDay},#{ent_airPort},#{ent_airTime})
+   </insert>
+   
+   <select id="selectOneMyRoute" parameterType="MyRoute" resultMap="CityPackageSet">
+   	
+	SELECT *
+	FROM CITY_PACKAGE
+	WHERE USER_ID = #{userId}
+	AND CITY = #{city}
+	AND AUTHOR = '나만의여행지'
+	AND ROOM = #{room}
+	AND ACTIVITY = #{activity}
+	AND TOUR = #{tour}
+	AND DEP_AIRLINE =#{dep_airLine}
+	AND DEP_AIRDAY = #{dep_airDay}
+	AND DEP_AIRTIME = #{dep_airTime}
+	AND ENT_AIRLINE =#{ent_airLine}
+	AND ENT_AIRDAY =#{ent_airDay}
+	AND ENT_AIRTIME = #{ent_airTime}
+   </select>
+   
+   
+</mapper>

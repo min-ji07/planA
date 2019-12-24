@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="myPageMapper"> <!-- Member에 있는 것을 사용 / type을 Member라고 써줘도 상관없긴 한데 중복될 수 있음-->
+	<!-- 여기 오면 일단 결과를 돌려받을 resultMap부터 생성 -->
+	<!-- 쿼리문 작성 --><!-- member객체를 가지고 와서 resultMap에 저장해놓음 -->
+	<resultMap id="myPageResultSet" type="User">
+		<id column="MID" property="mid"/>
+		<result column="USER_ID" property="userId"/>
+		<result column="USER_PWD" property="userPwd"/>
+		<result column="USER_NAME" property="userName"/>
+		<result column="NICKNAME" property="nickName"/>
+		<result column="BIRTHDAY" property="birthday"/>
+		<result column="PHONE" property="phone"/>
+		<result column="EMAIL" property="email"/>
+		<result column="ORIGIN_NAME" property="originName"/>
+		<result column="CHANGE_NAME" property="changeName"/>
+		<result column="AUTHKEY" property="authkey"/>
+		<result column="CHECKLIST" property="checkList"/>
+	</resultMap>
+	
+	<!-- 동하 마이 루트 리스트  -->
+	<resultMap id="CityPackageSet" type="RouteResult">
+   	<id column="SEQ_CITY" property="rootnum"/>
+   	<result column="USER_ID" property="user_id"/>
+   	<result column="CITY" property="city"/>
+   	<result column="country" property="country"/>
+   	<result column="AUTHOR" property="author"/>
+   	<result column="room" property="room"/>
+   	<result column="room_picture1" property="room_picture1"/>
+   	<result column="room_picture2" property="room_picture2"/>
+   	<result column="room_picture3" property="room_picture3"/>
+   	<result column="room_picture4" property="room_picture4"/>
+   	<result column="room_picture5" property="room_picture5"/>
+   	<result column="room_wifi" property="room_wifi"/>
+   	<result column="room_bf" property="room_bf"/>
+   	<result column="room_refund" property="room_refund"/>
+   	<result column="room_safe" property="room_safe"/>
+   	<result column="room_pool" property="room_pool"/>
+   	<result column="activity" property="activity"/>
+   	<result column="activity_picture1" property="activity_picture"/>
+   	<result column="activity_info" property="activity_info"/>
+   	<result column="tour" property="tour"/>
+   	<result column="tour_picture1" property="tour_picture"/>
+   	<result column="tour_info" property="tour_info"/>
+   	<result column="DEP_AIRLINE" property="dep_airLine"/>
+   	<result column="DEP_AIRDAY" property="dep_airDay"/>
+   	<result column="DEP_AIRPORT" property="dep_airPort"/>
+   	<result column="DEP_AIRTIME" property="dep_airTime"/>
+   	<result column="ENT_AIRLINE" property="ent_airLine"/>
+   	<result column="ENT_AIRDAY" property="ent_airDay"/>
+   	<result column="ENT_AIRPORT" property="ent_airPort"/>
+   	<result column="ENT_AIRTIME" property="ent_airTime"/>
+   	<result column="CATEGORY_1" property="category1"/>
+   	<result column="CATEGORY_2" property="category2"/>
+   	<result column="CATEGORY_3" property="category3"/>
+   	<result column="CATEGORY_4" property="category4"/>
+   	<result column="CATEGORY_5" property="category5"/>
+   </resultMap>
+	
+<!-- 나중에 resultMap해서 가져온 객체에서 자료를 가져오고 싶을 때 id로 연결해서 가져오는 것임 -->
+
+	<!-- 체크리스트 저장하기 - DB로 보내기 -->
+	<update id="myPageCheckListSave" parameterType="hashMap"> <!-- 접속한 아이디의 checklist값에 넣기 -->
+		UPDATE USER_INFO SET CHECKLIST = #{checkList} WHERE USER_ID = #{userId} <!-- CHECKLIST에 가지고 온 test(option1/option2/..)값 넣기 -->
+		<!-- #{0.a} 첫번째 hashmap #{1.b} 두번째 hashmap 값 호출 -->
+	</update>
+	
+	<!-- 체크리스트 불러오기, 나의 여행패키지 불러오기 - DB에 저장된 정보 띄우기 -->
+	<select id="myPageCheckList" parameterType="string" resultMap="myPageResultSet">
+		SELECT * FROM USER_INFO WHERE USER_ID = #{userId}
+	</select>
+	
+	<!-- 동행구하기 게시판 -->
+	<resultMap id="myPageBoardResultSet" type="TogetherBoard">
+		<id column="TID" property="tId"/>
+		<result column="USER_ID" property="user_id"/>
+		<result column="GENDER" property="gender"/>
+		<result column="AGE" property="age"/>
+		<result column="TITLE" property="title"/>
+		<result column="TRAVEL_DATE" property="travel_date"/>
+		<result column="CONTENT" property="content"/>
+		<result column="GENDER2" property="gender2"/>
+		<result column="AGE2" property="age2"/>
+		<result column="ING" property="ing"/>
+		<result column="WRITE_DATE" property="write_date"/>
+	</resultMap>
+	
+	<!--  동행구하기 작성글 불러오기 -->
+	<select id="myBoardList" parameterType="string" resultMap="myPageBoardResultSet">
+		SELECT * FROM TBOARD WHERE USER_ID = #{user_id}
+	</select>
+	
+	<!-- 나의 여행 가져오기 -->
+	<select id="myRouteList" parameterType="string" resultMap="CityPackageSet">
+		SELECT *
+		FROM CITY_PACKAGE
+		WHERE USER_ID = #{userId}
+	</select>
+	
+	<!-- 나의 여행패키지 상세보기 -->
+	<select id="MyPageRouteResult" parameterType="_int" resultMap="CityPackageSet">
+		SELECT *
+		FROM CITY_PACKAGE
+		WHERE SEQ_CITY = #{rootnum}
+	</select>
+	
+	<!-- 지도 값 가져오기 -->
+   <select id="myHistory" parameterType="string" resultMap="CityPackageSet">
+      SELECT DISTINCT COUNTRY FROM CITY_PACKAGE WHERE USER_ID = #{userId}
+   </select>
+	
+</mapper>

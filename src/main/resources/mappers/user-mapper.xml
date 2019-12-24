@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="User">
+	<!-- 여기 오면 일단 결과를 돌려받을 resultMap부터 생성 -->
+	 <resultMap id="userResultSet" type="User">
+		<id column="USER_ID" property="userId"/>
+		<result column="MID" property="mid"/>
+		<result column="USER_PWD" property="userPwd"/>
+		<result column="USER_NAME" property="userName"/>
+		<result column="NICKNAME" property="nickName"/>
+		<result column="BIRTHDAY" property="birthday"/>
+		<result column="PHONE" property="phone"/>
+		<result column="EMAIL" property="email"/>
+		<result column="ORIGIN_NAME" property="originName"/>
+		<result column="CHANGE_NAME" property="changeName"/>
+		<result column="AUTHKEY" property="authkey"/>
+		<result column="CHECKLIST" property="checkList"/>
+	</resultMap>
+	
+	<select id="duplicationCheck" parameterType="string" resultType="_int">
+		select count(*)
+		from user_info
+		where user_id = #{id}
+	</select>
+	
+	<!-- iBatis, myBatis에서  null이 들어가도 되는 column을 사용하기 위해서는 따로 처리를 해줘야 한다. -->
+	<!-- 컬럼 타입을 따로 지정해 줘야됨 -->
+	<insert id="insertUser" parameterType="User">
+		insert into user_info
+		values(seq_mid.nextval, #{userId}, #{userPwd, jdbcType=VARCHAR}, #{userName}, #{nickName}, #{birthday}, #{phone, jdbcType=VARCHAR},
+		#{email}, #{originName, jdbcType=VARCHAR}, #{changeName, jdbcType=VARCHAR}, #{authkey, jdbcType=VARCHAR}, #{checkList, jdbcType=VARCHAR})
+	</insert>
+	
+	<update id="updateAuthkey" parameterType="User">
+		update user_info
+		set authkey = #{authkey}
+		where user_id = #{userId}
+	</update>
+	
+	<update id="confirmAuthkey" parameterType="User">
+		update user_info
+		set authkey = 'Y'
+		where user_id = #{userId}
+	</update>
+	
+	<select id="loginCheck" parameterType="User" resultMap="userResultSet">
+		select *
+		from user_info
+		where user_id = #{userId}
+	</select>
+	
+	<select id="searchId" parameterType="User" resultMap="userResultSet">
+		select *
+		from user_info
+		where user_name = #{userName} and email = #{email}
+	</select>
+	
+	<select id="searchPwd" parameterType="User" resultMap="userResultSet">
+		select *
+		from user_info
+		where user_id = #{userId} and email = #{email}
+	</select>
+	
+	<update id="updatePwd" parameterType="User">
+		update user_info
+		set user_pwd = #{userPwd}
+		where user_id = #{userId}
+	</update>
+	
+	<update id="updateUser" parameterType="User">
+		update user_info
+		set user_pwd = #{userPwd, jdbcType=VARCHAR}, nickname = #{nickName}, phone = #{phone, jdbcType=VARCHAR}, email = #{email}, origin_name = #{originName, jdbcType=VARCHAR}, change_name = #{changeName, jdbcType=VARCHAR}
+		where user_id = #{userId}
+	</update>
+	
+	<delete id="deleteUser" parameterType="string">
+		delete from user_info
+		where user_id = #{userId}
+	</delete>
+</mapper>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="themesMapper">
+	<select id ="getListCount" resultType="_int">
+		select count(*) from theme
+	</select>
+	
+	<select id="selectList" resultMap="themesResultSet">
+		select * from theme order by T_SEQ desc
+	</select>
+	<resultMap type="Theme" id="themesResultSet">
+		<id column="city" property="city"/>
+		<result column="T_SEQ" property="tseq"/>
+		<result column="country" property="country"/>
+		<result column="citynum" property="cityNum"/>
+		<result column="city_info" property="cityInfo"/>
+		<result column="city_picture" property="cityPicture"/>
+		<result column="theme_name" property="themeName"/>
+		<result column="category1" property="category1"/>
+		<result column="category2" property="category2"/>
+		<result column="category3" property="category3"/>
+		<result column="category4" property="category4"/>
+		<result column="cost" property="cost"/>
+		<!-- <collection property="ThemeCategory" resultMap="ThemeCategory"/> -->
+	</resultMap>
+	<select id="selectTheme" parameterType="_int" resultMap="themesResultSet">
+		select * from THEME t
+    	join CITY_INFO c on(t.city = c.city)
+    	where T_SEQ = #{tseq}
+	</select>
+	<select id="checkedTheme" resultMap="themesResultSet">
+		select * from theme t
+		where '%'||#{checked}||'%' like '%'||t.category1||'%'
+		or'%'||#{checked}||'%' like '%'||t.category2||'%'
+		or'%'||#{checked}||'%' like '%'||t.category3||'%'
+		or'%'||#{checked}||'%' like '%'||t.category4||'%'
+		
+	</select>
+	<select id="checkListCount" resultType="_int">
+		select count(*) from theme t
+		where '%'||#{checked}||'%' like '%'||t.category1||'%'
+		or '%'||#{checked}||'%' like '%'||t.category2||'%'
+		or '%'||#{checked}||'%' like '%'||t.category3||'%'
+		or '%'||#{checked}||'%' like '%'||t.category4||'%'
+	</select>
+	
+	  <insert id="insertTheme" parameterType="RouteResult">
+	  	  insert into CITY_PACKAGE (SEQ_CITY,USER_ID,CITY,country,AUTHOR,room,room_picture1,room_picture2,
+      		room_picture3,room_picture4,room_picture5,room_wifi,room_bf,room_refund,room_safe,room_pool,
+      		activity,activity_picture1,activity_info,tour,tour_picture1,tour_info,
+      		CATEGORY_1,CATEGORY_2,CATEGORY_3,CATEGORY_4
+      		)
+	  	  values(SEQ_CITY.nextval, #{user_id}, #{ city }, #{ country }, '테마', #{ room },
+	  	  			#{ room_picture1 }, #{ room_picture2 }, #{ room_picture3 }, #{ room_picture4 },#{ room_picture5 },
+	  	  			#{ room_wifi}, #{ room_bf }, #{ room_refund }, #{room_safe}, #{room_pool},
+	  	  			#{ activity }, #{ activity_picture }, #{ activity_info },
+	  	  			#{ tour }, #{ tour_picture }, #{ tour_info },
+	  	  			#{ category1 },#{ category2 },#{ category3 },#{ category4 })
+	  </insert>
+</mapper>
